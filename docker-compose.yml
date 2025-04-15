@@ -24,6 +24,9 @@ services:
       - '8000:8000'
     networks:
       - app_network
+    volumes:
+      - ./migrations:/src/migrations
+      - .:/src
 
 volumes:
   postgres-data:

@@ -1,5 +1,5 @@
 [project]
-name = "goit-pythonweb-hw-08"
+name = "goit-pythonweb-hw-10"
 version = "0.1.0"
 description = ""
 authors = [
@@ -17,6 +17,18 @@ dotenv = "^0.9.9"
 email-validator = "^2.2.0"
 uvicorn = "^0.34.1"
 pydantic = ">=2.0"
+slowapi = "^0.1.9"
+pydantic-settings = "^2.8.1"
+fastapi-mail = "^1.4.2"
+cloudinary = "^1.44.0"
+python-jose = "^3.4.0"
+libgravatar = "^1.0.4"
+redis = "^5.2.1"
+redis-lru = "^0.1.2"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+psycopg2-binary = "^2.9.10"
+python-multipart = "^0.0.20"
+bcrypt = "<4.0"
 
 [tool.poetry]
 packages = [{ include = "src" }]
