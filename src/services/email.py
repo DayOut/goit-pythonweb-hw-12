@@ -21,12 +21,28 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(email: EmailStr, username: str, host: str):
+async def send_confirm_email(to_email: EmailStr, username: str, host: str) -> None:
+    """
+    Sends an email to verify the email address.
+
+    Creates an email verification token and sends an email to the user
+    with a link to verify the email.
+
+    Arguments:
+        to_email: The recipient's email address.
+        username: Username to personalize the email.
+        host: The host (home address) used to build the link.
+
+    Throws:
+        ConnectionErrors: If an error occurs while connecting to the email server.
+    """
     try:
-        token_verification = create_email_token({"sub": email})
+        # Створення токену для підтвердження електронної пошти
+        token_verification = create_email_token({"sub": to_email})
+        # Формування повідомлення для відправки
         message = MessageSchema(
             subject="Confirm your email",
-            recipients=[email],
+            recipients=[to_email],
             template_body={
                 "host": host,
                 "username": username,
@@ -35,7 +51,45 @@ async def send_email(email: EmailStr, username: str, host: str):
             subtype=MessageType.html,
         )
 
+        # Ініціалізація FastMail та відправка повідомлення
         fm = FastMail(conf)
         await fm.send_message(message, template_name="verify_email.html")
+    except ConnectionErrors as err:
+        print(err)
+
+
+async def send_reset_password_email(
+    to_email: EmailStr, username: str, host: str, reset_token: str
+) -> None:
+    """
+    Sends an email to reset the password.
+
+    Generates a link to reset the password and sends an email with instructions
+    to change the password.
+
+    Arguments:
+        to_email: The recipient's email address.
+        username: Username to personalize the email.
+        host: The host (home address) used to build the link.
+        reset_token: Token for resetting the password attached to the link.
+
+    Throws:
+        ConnectionErrors: If an error occurs while connecting to the email server.
+    """
+    try:
+        # Формування посилання для скидання пароля
+        reset_link = f"{host}api/auth/confirm_reset_password/{reset_token}"
+
+        # Формування повідомлення для відправки
+        message = MessageSchema(
+            subject="Important: Update your account information",
+            recipients=[to_email],
+            template_body={"reset_link": reset_link, "username": username},
+            subtype=MessageType.html,
+        )
+
+        # Ініціалізація FastMail та відправка повідомлення
+        fm = FastMail(conf)
+        await fm.send_message(message, template_name="reset_password.html")
     except ConnectionErrors as err:
         print(err)
